@@ -1,2 +1,2 @@
 # MASM Test
-Experimenting with the Microsoft Assembly programming language.
+Experimenting with the Microsoft Macro Assembler and the Assembly programming language.
