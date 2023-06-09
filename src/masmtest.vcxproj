@@ -132,9 +132,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <MASM Include="hello_world.asm">
+    <MASM Include="dirtest.asm" />
+    <None Include="hello_world.asm">
       <FileType>Document</FileType>
-    </MASM>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
