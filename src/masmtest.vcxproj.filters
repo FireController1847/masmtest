@@ -3,8 +3,9 @@
   <ItemGroup>
     <None Include="hello_world.asm" />
     <None Include="dirtest.asm" />
+    <None Include="windowtest.asm" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="windowtest.asm" />
+    <MASM Include="hello_world_2.asm" />
   </ItemGroup>
 </Project>
