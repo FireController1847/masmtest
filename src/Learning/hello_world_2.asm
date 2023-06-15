@@ -9,7 +9,6 @@ INCLUDELIB kernel32.lib
 ;       An improved version of Hello World
 ;       which contains error checking.
 
-
 ; Constants
 STD_INPUT_HANDLE EQU -10
 STD_OUTPUT_HANDLE EQU -11
@@ -62,11 +61,13 @@ main PROC
     CALL ClearRegisters
 
     ; Fetch console handles
-    MOV RCX, STD_OUTPUT_HANDLE
+    XOR RCX, RCX
+    MOV ECX, STD_OUTPUT_HANDLE
     CALL GetStdHandle
     JZ Crash
     MOV StdOutHandle, RAX
-    MOV RCX, STD_INPUT_HANDLE
+    XOR RCX, RCX
+    MOV ECX, STD_INPUT_HANDLE
     CALL GetStdHandle
     JZ Crash
     MOV StdInHandle, RAX
