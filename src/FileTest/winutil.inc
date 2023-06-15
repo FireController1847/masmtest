@@ -19,10 +19,27 @@ TextToExit      WORD    0Dh, 0Ah, 50h, 72h, 65h, 73h, 73h, 20h, 65h, 6Eh, 74h, 6
 ; Standard I/O
 StdOutHandle        QWORD   ?
 StdInHandle         QWORD   ?
-StdInBuffer         WORD    8 DUP (?)
+StdInBuffer         WORD    260 DUP (?)
 StdInCharsWritten   BYTE    ?
 
 .CODE
+M_WRITECONSOLE MACRO W_STR, W_STRLEN
+    MOV RCX, StdOutHandle
+    LEA RDX, W_STR
+    MOV R8, W_STRLEN
+    CALL WriteConsoleW
+    JZ Crash
+ENDM
+
+M_READCONSOLE MACRO
+    MOV RCX, StdInHandle
+    LEA RDX, StdInBuffer
+    MOV R8, LENGTHOF StdInBuffer
+    LEA R9, StdInCharsWritten
+    CALL ReadConsoleW
+    JZ Crash
+ENDM
+
 ; Clear Registers Procedure
 ClearRegisters PROC
     XOR RAX, RAX
@@ -43,6 +60,8 @@ Crash ENDP
 
 ; Initializes Console
 InitConsole PROC
+    SUB RSP, 20h
+
     ; Clear registers
     XOR RCX, RCX
     CALL SetLastError
@@ -59,26 +78,18 @@ InitConsole PROC
     CALL GetStdHandle
     JZ Crash
     MOV StdInHandle, RAX
+
+    ; Return
+    ADD RSP, 20h
+    RET
 InitConsole ENDP
 
 PauseAndExit PROC
-    ; Write exit line
-    MOV RCX, StdOutHandle
-    LEA RDX, TextToExit
-    MOV R8, LENGTHOF TextToExit
-    CALL WriteConsoleW
-    JZ Crash
-
-    ; Read text input
-    MOV RCX, StdInHandle
-    LEA RDX, StdInBuffer
-    MOV R8, LENGTHOF StdInBuffer
-    LEA R9, StdInCharsWritten
-    CALL ReadConsoleW
-    JZ Crash
+    ; Write exit line and wait for enter
+    M_WRITECONSOLE TextToExit, LENGTHOF TextToExit
+    M_READCONSOLE
 
     ; Exit
-    XOR RCX, RCX
     LEA RCX, ExitProcess
     JMP RCX
 PauseAndExit ENDP

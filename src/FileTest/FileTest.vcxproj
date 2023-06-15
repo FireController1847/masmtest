@@ -133,7 +133,13 @@
     <MASM Include="filetest.asm">
       <FileType>Document</FileType>
     </MASM>
-    <None Include="winutil.inc" />
+    <None Include="winstruct.inc" />
+    <None Include="winutil.inc">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="test.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
