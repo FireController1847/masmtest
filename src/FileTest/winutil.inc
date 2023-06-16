@@ -13,6 +13,8 @@ GetLastError PROTO
 ExitProcess PROTO
 
 .DATA
+ALIGN 16
+
 ; Strings
 TextToExit      WORD    0Dh, 0Ah, 50h, 72h, 65h, 73h, 73h, 20h, 65h, 6Eh, 74h, 65h, 72h, 20h, 74h, 6Fh, 20h, 65h, 78h, 69h, 74h, 2Eh, 00h   ; Press enter to exit.
 

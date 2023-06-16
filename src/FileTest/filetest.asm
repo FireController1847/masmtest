@@ -7,9 +7,9 @@ GetFileAttributesW PROTO
 GetLastError PROTO
 
 .DATA
+ALIGN 16
+
 ; Strings
-; TODO: Variable is being overwritten by a call to M_READCONSOLE. Likely an internal issue.
-;       I suspect it has to do with buffer overrun. More investigation is needed.
 TextInvalidName     WORD    54h, 68h, 65h, 20h, 66h, 69h, 6Ch, 65h, 6Eh, 61h, 6Dh, 65h, 2Ch, 20h, 64h, 69h
                     WORD    72h, 65h, 63h, 74h, 6Fh, 72h, 79h, 20h, 6Eh, 61h, 6Dh, 65h, 2Ch, 20h, 6Fh, 72h
                     WORD    20h, 76h, 6Fh, 6Ch, 75h, 6Dh, 65h, 20h, 6Ch, 61h, 62h, 65h, 6Ch, 20h, 73h, 79h
@@ -35,7 +35,7 @@ ENDM
 InvalidFilePath PROC
     XOR RCX, RCX
     CALL GetLastError
-    CMP RAX, 7Bh    ; ERROR_INVALID_NAME 7Bh
+    CMP RAX, 7Bh    ; ERROR_INVALID_NAME (7Bh)
     JNE p_unknown_error
 p_invalid_file_name::
     M_WRITECONSOLE TextInvalidName, 69
