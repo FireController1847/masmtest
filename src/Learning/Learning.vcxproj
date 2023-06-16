@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="dirtest.asm">
+    <MASM Include="dirtest.asm">
       <FileType>Document</FileType>
-    </None>
+    </MASM>
     <None Include="hello_world.asm">
       <FileType>Document</FileType>
     </None>
-    <MASM Include="hello_world_2.asm">
+    <None Include="hello_world_2.asm">
       <FileType>Document</FileType>
-    </MASM>
+    </None>
     <None Include="windowtest.asm">
       <FileType>Document</FileType>
     </None>

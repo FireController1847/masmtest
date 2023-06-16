@@ -22,7 +22,7 @@ TextToExit      WORD    0Dh, 0Ah, 50h, 72h, 65h, 73h, 73h, 20h, 65h, 6Eh, 74h, 6
 StdOutHandle        QWORD   ?
 StdInHandle         QWORD   ?
 StdInBuffer         WORD    260 DUP (?)
-StdInCharsWritten   BYTE    ?
+StdInCharsWritten   DWORD   ?
 
 .CODE
 M_WRITECONSOLE MACRO W_STR, W_STRLEN
@@ -56,8 +56,8 @@ ClearRegisters ENDP
 Crash PROC
     CALL ClearRegisters
     CALL GetLastError
-    LEA RCX, ExitProcess
-    JMP RCX
+    MOV RCX, RAX
+    CALL ExitProcess
 Crash ENDP
 
 ; Initializes Console
@@ -92,6 +92,6 @@ PauseAndExit PROC
     M_READCONSOLE
 
     ; Exit
-    LEA RCX, ExitProcess
-    JMP RCX
+    MOV RCX, 0
+    CALL ExitProcess
 PauseAndExit ENDP
