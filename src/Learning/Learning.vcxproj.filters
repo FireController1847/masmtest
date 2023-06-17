@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <MASM Include="dirtest.asm" />
+    <MASM Include="memorytest.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="testlang.lang" />
     <None Include="hello_world.asm" />
     <None Include="windowtest.asm" />
     <None Include="hello_world_2.asm" />
+    <None Include="dirtest.asm" />
+    <None Include="hextounicode.asm" />
   </ItemGroup>
 </Project>

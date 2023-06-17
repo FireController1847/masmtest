@@ -19,9 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="dirtest.asm">
+    <MASM Include="memorytest.asm" />
+    <None Include="dirtest.asm">
       <FileType>Document</FileType>
-    </MASM>
+    </None>
+    <None Include="hextounicode.asm">
+      <FileType>Document</FileType>
+    </None>
     <None Include="hello_world.asm">
       <FileType>Document</FileType>
     </None>

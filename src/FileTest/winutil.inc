@@ -29,7 +29,9 @@ M_WRITECONSOLE MACRO W_STR, W_STRLEN
     MOV RCX, StdOutHandle
     LEA RDX, W_STR
     MOV R8, W_STRLEN
+    SUB RSP, 20h
     CALL WriteConsoleW
+    ADD RSP, 20h
     JZ Crash
 ENDM
 
@@ -38,7 +40,9 @@ M_READCONSOLE MACRO
     LEA RDX, StdInBuffer
     MOV R8, LENGTHOF StdInBuffer
     LEA R9, StdInCharsWritten
+    SUB RSP, 20h
     CALL ReadConsoleW
+    ADD RSP, 20h
     JZ Crash
 ENDM
 
@@ -55,7 +59,9 @@ ClearRegisters ENDP
 ; Crash Procedure
 Crash PROC
     CALL ClearRegisters
+    SUB RSP, 20h
     CALL GetLastError
+    ADD RSP, 20h
     MOV RCX, RAX
     CALL ExitProcess
 Crash ENDP
@@ -66,18 +72,24 @@ InitConsole PROC
 
     ; Clear registers
     XOR RCX, RCX
+    SUB RSP, 20h
     CALL SetLastError
+    ADD RSP, 20h
     CALL ClearRegisters
 
     ; Fetch console handles
     XOR RCX, RCX
     MOV ECX, STD_OUTPUT_HANDLE
+    SUB RSP, 20h
     CALL GetStdHandle
+    ADD RSP, 20h
     JZ Crash
     MOV StdOutHandle, RAX
     XOR RCX, RCX
     MOV ECX, STD_INPUT_HANDLE
+    SUB RSP, 20h
     CALL GetStdHandle
+    ADD RSP, 20h
     JZ Crash
     MOV StdInHandle, RAX
 
