@@ -150,12 +150,12 @@ p_skip_invalid_file_path::
     MOV RDX, 80000000h  ; GENERIC_READ
     MOV R8, 00000001h   ; FILE_SHARE_READ
     MOV R9, 0h          ; NULL
-    SUB RSP, 50h
+    SUB RSP, 40h
     PUSH 0h             ; NULL
     PUSH 80h            ; FILE_ATTRIBUTE_NORMAL
     PUSH 3              ; OPEN_EXISTING
     CALL CreateFileW
-    ADD RSP, 50h
+    ADD RSP, 40h
     CMP EAX, -1
     JNE p_skip_invalid_create_file
     CALL InternalError
