@@ -66,7 +66,7 @@ ENDM
 
 ; Hex to Unicode
 HexToUnicode PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -96,7 +96,7 @@ p_shl_skip:
     JNZ p_loop
     SHL RAX, 8
 
-    ; Prolog
+    ; Epilog
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
@@ -104,7 +104,7 @@ p_shl_skip:
 HexToUnicode ENDP
 
 InternalError PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -135,7 +135,7 @@ InternalError PROC
 p_file_not_found::
     M_WRITECONSOLE TextErrorCode0002, TextErrorCode0002_LEN
 p_exit::
-    ; Prolog
+    ; Epilog
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
@@ -146,7 +146,7 @@ InternalError ENDP
 main PROC
     LOCAL CharsWritten: QWORD
 
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 40h    ; 20h shadow space, 8h for local QWORD CharsWritten, 18h for 3 stack arguments
@@ -268,7 +268,7 @@ p_skip_fail_heapdestroy::
     ; Print a newline
     M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
 
-    ; Prolog
+    ; Epilog
     ADD RSP, 40h
     MOV RSP, RBP
     POP RBP

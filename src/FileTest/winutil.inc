@@ -46,7 +46,7 @@ ENDM
 
 ; Clear Registers Procedure
 ClearRegisters PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -58,7 +58,7 @@ ClearRegisters PROC
     XOR R8, R8
     XOR R9, R9
 
-    ; Prolog
+    ; Epilog
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
@@ -67,7 +67,7 @@ ClearRegisters ENDP
 
 ; Crash Procedure
 Crash PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -77,7 +77,7 @@ Crash PROC
     CALL GetLastError
     MOV RCX, RAX
 
-    ; Prolog
+    ; Epilog
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
@@ -86,7 +86,7 @@ Crash ENDP
 
 ; Initializes Console
 InitConsole PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -108,7 +108,7 @@ InitConsole PROC
     JZ Crash
     MOV StdInHandle, RAX
 
-    ; Return
+    ; Epilog
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
@@ -116,7 +116,7 @@ InitConsole PROC
 InitConsole ENDP
 
 PauseAndExit PROC
-    ; Epilog
+    ; Prolog
     PUSH RBP
     MOV RBP, RSP
     SUB RSP, 20h
@@ -128,7 +128,7 @@ PauseAndExit PROC
     M_WRITECONSOLE TextToExit, LENGTHOF TextToExit
     M_READCONSOLE
 
-    ; Exit
+    ; Epilog
     MOV RCX, 0
     ADD RSP, 20h
     MOV RSP, RBP
