@@ -77,10 +77,7 @@ Crash PROC
     CALL GetLastError
     MOV RCX, RAX
 
-    ; Epilog
-    ADD RSP, 20h
-    MOV RSP, RBP
-    POP RBP
+    ; Exit
     CALL ExitProcess
 Crash ENDP
 
@@ -128,10 +125,7 @@ PauseAndExit PROC
     M_WRITECONSOLE TextToExit, LENGTHOF TextToExit
     M_READCONSOLE
 
-    ; Epilog
+    ; Exit
     MOV RCX, 0
-    ADD RSP, 20h
-    MOV RSP, RBP
-    POP RBP
     CALL ExitProcess
 PauseAndExit ENDP

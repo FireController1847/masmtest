@@ -135,11 +135,13 @@ InternalError PROC
 p_file_not_found::
     M_WRITECONSOLE TextErrorCode0002, TextErrorCode0002_LEN
 p_exit::
-    ; Epilog
+    ; Pause and exit
+    CALL PauseAndExit
+
+    ; Epilog (future proofing)
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
-    CALL PauseAndExit
 InternalError ENDP
 
 
@@ -268,10 +270,12 @@ p_skip_fail_heapdestroy::
     ; Print a newline
     M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
 
-    ; Epilog
+    ; Pause and exit
+    CALL PauseAndExit
+
+    ; Epilog (future proofing)
     ADD RSP, 40h
     MOV RSP, RBP
     POP RBP
-    CALL PauseAndExit
 main ENDP
 END
