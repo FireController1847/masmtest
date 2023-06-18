@@ -29,9 +29,7 @@ M_WRITECONSOLE MACRO W_STR, W_STRLEN
     MOV RCX, StdOutHandle
     LEA RDX, W_STR
     MOV R8, W_STRLEN
-    SUB RSP, 20h
     CALL WriteConsoleW
-    ADD RSP, 20h
     CMP RAX, 0
     JZ Crash
 ENDM
@@ -41,62 +39,79 @@ M_READCONSOLE MACRO
     LEA RDX, StdInBuffer
     MOV R8, LENGTHOF StdInBuffer
     LEA R9, StdInCharsWritten
-    SUB RSP, 20h
     CALL ReadConsoleW
-    ADD RSP, 20h
     CMP RAX, 0
     JZ Crash
 ENDM
 
 ; Clear Registers Procedure
 ClearRegisters PROC
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 20h
+
+    ; Clear registers
     XOR RAX, RAX
     XOR RCX, RCX
     XOR RDX, RDX
     XOR R8, R8
     XOR R9, R9
+
+    ; Prolog
+    ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
     RET
 ClearRegisters ENDP
 
 ; Crash Procedure
 Crash PROC
-    CALL ClearRegisters
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
     SUB RSP, 20h
+
+    ; Get last error
+    CALL ClearRegisters
     CALL GetLastError
-    ADD RSP, 20h
     MOV RCX, RAX
+
+    ; Prolog
+    ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
     CALL ExitProcess
 Crash ENDP
 
 ; Initializes Console
 InitConsole PROC
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
     SUB RSP, 20h
 
     ; Clear registers
     XOR RCX, RCX
-    SUB RSP, 20h
     CALL SetLastError
-    ADD RSP, 20h
     CALL ClearRegisters
 
     ; Fetch console handles
     XOR RCX, RCX
     MOV ECX, STD_OUTPUT_HANDLE
-    SUB RSP, 20h
     CALL GetStdHandle
-    ADD RSP, 20h
     JZ Crash
     MOV StdOutHandle, RAX
     XOR RCX, RCX
     MOV ECX, STD_INPUT_HANDLE
-    SUB RSP, 20h
     CALL GetStdHandle
-    ADD RSP, 20h
     JZ Crash
     MOV StdInHandle, RAX
 
     ; Return
     ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
     RET
 InitConsole ENDP
 

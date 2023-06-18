@@ -66,6 +66,11 @@ ENDM
 
 ; Hex to Unicode
 HexToUnicode PROC
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 20h
+
     XOR RAX, RAX
     MOV RDX, 4
 p_loop::
@@ -90,15 +95,23 @@ p_shr_loop_exit::
 p_shl_skip:
     JNZ p_loop
     SHL RAX, 8
+
+    ; Prolog
+    ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
     RET
 HexToUnicode ENDP
 
 InternalError PROC
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 20h
+
     ; Get last error
     XOR RCX, RCX
-    SUB RSP, 20h
     CALL GetLastError
-    ADD RSP, 20h
 
     ; Convert to Unicode
     MOV RCX, RAX
@@ -122,6 +135,11 @@ InternalError PROC
 p_file_not_found::
     M_WRITECONSOLE TextErrorCode0002, TextErrorCode0002_LEN
 p_exit::
+    ; Prolog
+    ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
+
     ; Exit
     CALL PauseAndExit
 InternalError ENDP
@@ -129,6 +147,11 @@ InternalError ENDP
 
 main PROC
     LOCAL CharsWritten: QWORD
+
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 40h    ; 20h shadow space, 8h for local QWORD CharsWritten, 18h for 3 stack arguments
 
     ; Initialize console
     CALL InitConsole
@@ -143,9 +166,7 @@ main PROC
 
     ; Get attributes
     LEA RCX, TextTestfilePath
-    SUB RSP, 20h
     CALL GetFileAttributesW
-    ADD RSP, 20h
     CMP EAX, -1 ; INVALID_FILE_ATTRIBUTES (0xFFFFFFFF)
     ; TODO: Instead of just erroring, re-prompt the user for a valid file.
     JNE p_skip_invalid_file_path
@@ -165,12 +186,10 @@ p_skip_invalid_file_path::
     MOV RDX, 80000000h      ; GENERIC_READ
     MOV R8, 00000001h       ; FILE_SHARE_READ
     MOV R9, 0h              ; NULL
-    SUB RSP, 20h
     MOV QWORD PTR [RSP + 20h], 3
     MOV QWORD PTR [RSP + 28h], 80h
     MOV QWORD PTR [RSP + 30h], 00h
     CALL CreateFileW
-    ADD RSP, 20h
     CMP EAX, -1
     JNE p_skip_invalid_create_file
     CALL InternalError
@@ -180,9 +199,7 @@ p_skip_invalid_create_file::
     ; Get the file size
     MOV RCX, hFile
     LEA RDX, fileSize
-    SUB RSP, 20h
     CALL GetFileSizeEx
-    ADD RSP, 20h
     JNZ p_skip_invalid_filesize
     CALL InternalError
 p_skip_invalid_filesize::
@@ -191,9 +208,7 @@ p_skip_invalid_filesize::
     MOV RCX, 0
     MOV RDX, 0
     MOV R8, RAX
-    SUB RSP, 20h
     CALL HeapCreate
-    ADD RSP, 20h
     JNZ p_skip_fail_heapcreate
     CALL InternalError
 p_skip_fail_heapcreate::
@@ -203,9 +218,7 @@ p_skip_fail_heapcreate::
     MOV RCX, RAX
     MOV RDX, 00000008h
     MOV R8, fileSize
-    SUB RSP, 20h
     CALL HeapAlloc
-    ADD RSP, 20h
     JNZ p_skip_fail_heapalloc
     CALL InternalError
 p_skip_fail_heapalloc::
@@ -216,18 +229,14 @@ p_skip_fail_heapalloc::
     MOV RDX, ptrFileMem
     MOV R8, fileSize
     LEA R9, fileBytesRead
-    SUB RSP, 20h
     MOV QWORD PTR [RSP + 20h], 00h
     CALL ReadFile
-    ADD RSP, 20h
     JNZ p_skip_fail_readfile
     CALL InternalError
 p_skip_fail_readfile:
     ; Close the file
     MOV RCX, hFile
-    SUB RSP, 20h
     CALL CloseHandle
-    ADD RSP, 20h
 
     ; The file is now in memory.
 
@@ -239,9 +248,7 @@ p_skip_fail_readfile:
     MOV R8, fileSize
     SHR R8, 1
     SUB R8, 1
-    SUB RSP, 20h
     CALL WriteConsoleW
-    ADD RSP, 20h
     CMP RAX, 0
     JZ Crash
 
@@ -249,26 +256,25 @@ p_skip_fail_readfile:
     MOV RCX, hFileHeap
     MOV RDX, 0h
     MOV R8, ptrFileMem
-    SUB RSP, 20h
     CALL HeapFree
-    ADD RSP, 20h
     JNZ p_skip_fail_heapfree
     CALL InternalError
 p_skip_fail_heapfree::
 
     ; Destroy heap
     MOV RCX, hFileHeap
-    SUB RSP, 20h
     CALL HeapDestroy
-    ADD RSP, 20h
     JNZ p_skip_fail_heapdestroy
     CALL InternalError
 p_skip_fail_heapdestroy::
 
     ; Print a newline
-    SUB RSP, 20h
     M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
-    ADD RSP, 20h
+
+    ; Prolog
+    ADD RSP, 40h
+    MOV RSP, RBP
+    POP RBP
 
     ; Exit process
     CALL ClearRegisters
