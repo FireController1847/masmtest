@@ -139,8 +139,6 @@ p_exit::
     ADD RSP, 20h
     MOV RSP, RBP
     POP RBP
-
-    ; Exit
     CALL PauseAndExit
 InternalError ENDP
 
@@ -241,7 +239,6 @@ p_skip_fail_readfile:
     ; The file is now in memory.
 
     ; Print the file
-    SUB RSP, 20h
     MOV RCX, StdOutHandle
     MOV RDX, ptrFileMem
     ADD RDX, 2h
@@ -275,9 +272,6 @@ p_skip_fail_heapdestroy::
     ADD RSP, 40h
     MOV RSP, RBP
     POP RBP
-
-    ; Exit process
-    CALL ClearRegisters
     CALL PauseAndExit
 main ENDP
 END

@@ -116,11 +116,22 @@ InitConsole PROC
 InitConsole ENDP
 
 PauseAndExit PROC
+    ; Epilog
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 20h
+
+    ; Clear the registers
+    CALL ClearRegisters
+
     ; Write exit line and wait for enter
     M_WRITECONSOLE TextToExit, LENGTHOF TextToExit
     M_READCONSOLE
 
     ; Exit
     MOV RCX, 0
+    ADD RSP, 20h
+    MOV RSP, RBP
+    POP RBP
     CALL ExitProcess
 PauseAndExit ENDP
