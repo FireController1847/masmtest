@@ -1,5 +1,12 @@
 INCLUDELIB kernel32.lib
 
+; =========================
+; ==       WINUTIL       ==
+; =========================
+; Updated: 2023-06-18
+; Author: FireController#1847
+; Copyright: © 2023 - All Rights Reserved.
+
 ; Constants
 STD_INPUT_HANDLE EQU -10
 STD_OUTPUT_HANDLE EQU -11

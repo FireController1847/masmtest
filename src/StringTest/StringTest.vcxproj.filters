@@ -4,7 +4,7 @@
     <MASM Include="utf8test.asm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="winutil.inc" />
     <None Include="docs.md" />
+    <None Include="winutil.inc" />
   </ItemGroup>
 </Project>
