@@ -32,6 +32,7 @@ M_WRITECONSOLE MACRO W_STR, W_STRLEN
     SUB RSP, 20h
     CALL WriteConsoleW
     ADD RSP, 20h
+    CMP RAX, 0
     JZ Crash
 ENDM
 
@@ -43,6 +44,7 @@ M_READCONSOLE MACRO
     SUB RSP, 20h
     CALL ReadConsoleW
     ADD RSP, 20h
+    CMP RAX, 0
     JZ Crash
 ENDM
 

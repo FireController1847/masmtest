@@ -6,6 +6,12 @@ INCLUDE winutil.inc
 GetFileAttributesW PROTO
 CreateFileW PROTO
 GetFileSizeEx PROTO
+HeapCreate PROTO
+HeapAlloc PROTO
+HeapFree PROTO
+HeapDestroy PROTO
+ReadFile PROTO
+CloseHandle PROTO
 GetLastError PROTO
 
 .DATA
@@ -30,6 +36,10 @@ UnicodeNumbers          WORD    30h, 31h, 32h, 33h, 34h, 35h, 36h, 37h, 38h, 39h
 ; Handles
 fileAttributes  QWORD   ?
 hFile           QWORD   ?
+fileSize        QWORD   ?
+hFileHeap       QWORD   ?
+ptrFileMem      QWORD   ?
+fileBytesRead   WORD    ?
 
 .CODE
 M_COPYSTR MACRO MEM_FROM, MEM_TO
@@ -119,6 +129,8 @@ InternalError ENDP
 
 main PROC
     LOCAL CharsWritten: QWORD
+
+    ; Initialize console
     CALL InitConsole
 
     ; Prompt for filename
@@ -147,19 +159,108 @@ p_skip_invalid_file_path::
     ; Open the file for GENERIC_READ
     CALL ClearRegisters
     LEA RCX, TextTestfilePath
-    MOV RDX, 80000000h  ; GENERIC_READ
-    MOV R8, 00000001h   ; FILE_SHARE_READ
-    MOV R9, 0h          ; NULL
-    SUB RSP, 40h
-    PUSH 0h             ; NULL
-    PUSH 80h            ; FILE_ATTRIBUTE_NORMAL
-    PUSH 3              ; OPEN_EXISTING
+    MOV RDX, 80000000h      ; GENERIC_READ
+    MOV R8, 00000001h       ; FILE_SHARE_READ
+    MOV R9, 0h              ; NULL
+    SUB RSP, 20h
+    MOV QWORD PTR [RSP + 20h], 3
+    MOV QWORD PTR [RSP + 28h], 80h
+    MOV QWORD PTR [RSP + 30h], 00h
     CALL CreateFileW
-    ADD RSP, 40h
+    ADD RSP, 20h
     CMP EAX, -1
     JNE p_skip_invalid_create_file
     CALL InternalError
 p_skip_invalid_create_file::
+    MOV hFile, RAX
+
+    ; Get the file size
+    MOV RCX, hFile
+    LEA RDX, fileSize
+    SUB RSP, 20h
+    CALL GetFileSizeEx
+    ADD RSP, 20h
+    JNZ p_skip_invalid_filesize
+    CALL InternalError
+p_skip_invalid_filesize::
+
+    ; Create a new heap for the file
+    MOV RCX, 0
+    MOV RDX, 0
+    MOV R8, RAX
+    SUB RSP, 20h
+    CALL HeapCreate
+    ADD RSP, 20h
+    JNZ p_skip_fail_heapcreate
+    CALL InternalError
+p_skip_fail_heapcreate::
+    MOV hFileHeap, RAX
+
+    ; Allocate the file memory
+    MOV RCX, RAX
+    MOV RDX, 00000008h
+    MOV R8, fileSize
+    SUB RSP, 20h
+    CALL HeapAlloc
+    ADD RSP, 20h
+    JNZ p_skip_fail_heapalloc
+    CALL InternalError
+p_skip_fail_heapalloc::
+    MOV ptrFileMem, RAX
+
+    ; Read the file into memory
+    MOV RCX, hFile
+    MOV RDX, ptrFileMem
+    MOV R8, fileSize
+    LEA R9, fileBytesRead
+    SUB RSP, 20h
+    MOV QWORD PTR [RSP + 20h], 00h
+    CALL ReadFile
+    ADD RSP, 20h
+    JNZ p_skip_fail_readfile
+    CALL InternalError
+p_skip_fail_readfile:
+    ; Close the file
+    MOV RCX, hFile
+    SUB RSP, 20h
+    CALL CloseHandle
+    ADD RSP, 20h
+
+    ; The file is now in memory.
+
+    ; Print the file - 24h
+    SUB RSP, 20h
+    MOV RCX, StdOutHandle
+    MOV RDX, ptrFileMem
+    MOV R8, fileSize
+    SUB RSP, 20h
+    CALL WriteConsoleW
+    ADD RSP, 20h
+    CMP RAX, 0
+    JZ Crash
+
+    ; Free allocated file memory
+    MOV RCX, hFileHeap
+    MOV RDX, 0h
+    MOV R8, ptrFileMem
+    SUB RSP, 20h
+    CALL HeapFree
+    ADD RSP, 20h
+    JNZ p_skip_fail_heapfree
+    CALL InternalError
+p_skip_fail_heapfree::
+
+    ; Destroy heap
+    MOV RCX, hFileHeap
+    SUB RSP, 20h
+    CALL HeapDestroy
+    ADD RSP, 20h
+    JNZ p_skip_fail_heapdestroy
+    CALL InternalError
+p_skip_fail_heapdestroy::
+
+    ; Print a newline
+    M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
 
     ; Exit process
     CALL ClearRegisters
