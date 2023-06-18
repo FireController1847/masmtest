@@ -153,8 +153,11 @@ main PROC
 p_skip_invalid_file_path::
     MOV fileAttributes, RAX
     CALL ClearRegisters
+
+    ; Print input to screen
     M_WRITECONSOLE TextTestfilePath, CharsWritten
-    M_WRITECONSOLE TextNewline, 3
+    M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
+    M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
 
     ; Open the file for GENERIC_READ
     CALL ClearRegisters
@@ -228,11 +231,14 @@ p_skip_fail_readfile:
 
     ; The file is now in memory.
 
-    ; Print the file - 24h
+    ; Print the file
     SUB RSP, 20h
     MOV RCX, StdOutHandle
     MOV RDX, ptrFileMem
+    ADD RDX, 2h
     MOV R8, fileSize
+    SHR R8, 1
+    SUB R8, 1
     SUB RSP, 20h
     CALL WriteConsoleW
     ADD RSP, 20h
@@ -260,7 +266,9 @@ p_skip_fail_heapfree::
 p_skip_fail_heapdestroy::
 
     ; Print a newline
+    SUB RSP, 20h
     M_WRITECONSOLE TextNewline, LENGTHOF TextNewline
+    ADD RSP, 20h
 
     ; Exit process
     CALL ClearRegisters
