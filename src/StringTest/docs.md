@@ -1,3 +1,17 @@
+# Table of Contents
+- [winutil.inc](#winutilinc)
+  - [Constants](#constants)
+  - [Data](#data)
+    - [Text](#text)
+    - [Standard I/O](#standard-io)
+  - [Macros](#macros)
+    - [M_WRITECONSOLE](#m_writeconsole)
+    - [M_READCONSOLE](#m_readconsole)
+  - [Procedures](#procedures)
+    - [Crash](#crash)
+    - [InitConsole](#initconsole)
+    - [PauseAndExit](#pauseandexit)
+
 # winutil.inc
 ## Constants
 `STD_INPUT_HANDLE (-10)`  
@@ -63,7 +77,7 @@ void PauseAndExit(
     [in] QWORD  ExitCode
 );
 ```
-**See**: [Data#Text](#text), [ExitProcess](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess)  
+**See**: [ExitProcess](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess)  
 
 Writes the `TextToExit` string to the screen, waits for an 'ENTER' press from the user,
 and then exits the process with the specified exit code.
