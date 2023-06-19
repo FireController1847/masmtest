@@ -7,6 +7,7 @@
   - [Macros](#macros)
     - [M_WRITECONSOLE](#m_writeconsole)
     - [M_READCONSOLE](#m_readconsole)
+    - [M_UTF8_TO_UTF16LE](#m_utf8_to_utf16le)
   - [Procedures](#procedures)
     - [Crash](#crash)
     - [InitConsole](#initconsole)
@@ -33,6 +34,7 @@ Handles are initialized via `InitConsole`.
 
 ## Macros
 ### M_WRITECONSOLE
+**Required Stack Space**: `N/A`  
 **Args:** `W_STR`, `W_STRLEN`  
 **See:** [WriteConsole](https://learn.microsoft.com/en-us/windows/console/writeconsole)  
   
@@ -40,11 +42,20 @@ Loads the effective address of W_STR, then writes W_STRLEN characters of it to t
 console output.
 
 ### M_READCONSOLE
+**Required Stack Space**: `8h` (1 stack argument)  
 **Args:** `N/A`  
 **See:** [ReadConsole](https://learn.microsoft.com/en-us/windows/console/readconsole)  
   
 Waits for console input and then an 'ENTER' press. Writes the result into `StdInBuffer`
 and the number of characters written into `StdInCharsWritten`.
+
+### M_UTF8_TO_UTF16LE
+**Required Stack Space**: `10h` (2 stack arguments)  
+**Args:** `UTF8_STR`, `UTF16_BUFFER`, `STRLEN`  
+**See:** [MultiByteToWideChar](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar)
+
+Converts a given UTF-8 string via pointer to a UTF-16 string and writes the number
+of characters given to the buffer.
 
 ## Procedures
 ### Crash
