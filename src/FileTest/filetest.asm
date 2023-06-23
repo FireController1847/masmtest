@@ -45,11 +45,11 @@ fileBytesRead   WORD    ?
 M_COPYSTR MACRO MEM_FROM, MEM_TO
     LOCAL m_copystr
     MOV RCX, 0
-m_copystr::
     LEA R8, MEM_FROM
-    MOV DX, [R8 + RCX]
-    LEA R8, MEM_TO
-    MOV [R8 + RCX], DX
+    LEA R9, MEM_TO
+m_copystr::
+    MOV DX, [R8 + RCX * 2]
+    MOV [R9 + RCX * 2], DX
     INC RCX
     CMP DX, 0
     JNZ m_copystr
@@ -60,8 +60,8 @@ M_REMOVECRLF MACRO PTR_STR, STR_CHARS
     MOV RDX, QWORD PTR STR_CHARS
     ADD RCX, RDX
     ADD RCX, RDX
-    SUB RCX, DWORD
-    MOV QWORD PTR [RCX], 00h
+    SUB RCX, 4
+    MOV DWORD PTR [RCX], 0
 ENDM
 
 ; Hex to Unicode
